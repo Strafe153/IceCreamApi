@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IceCreamApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 
 namespace IceCreamApi
 {
@@ -29,7 +31,13 @@ namespace IceCreamApi
         {
             services.AddDbContext<IceCreamContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
-            services.AddControllers();
+
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+                
+            }).AddNewtonsoftJson(j => j.SerializerSettings.ContractResolver = 
+                new CamelCasePropertyNamesContractResolver());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
