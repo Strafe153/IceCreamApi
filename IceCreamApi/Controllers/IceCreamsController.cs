@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using IceCreamApi.Dtos;
 using IceCreamApi.Models;
 using IceCreamApi.Repositories;
+using AutoMapper;
 
 namespace IceCreamApi.Controllers
 {
@@ -13,22 +15,27 @@ namespace IceCreamApi.Controllers
     public class IceCreamsController : ControllerBase
     {
         private readonly IControllerRepository _repository;
+        private readonly IMapper _mapper;
 
-        public IceCreamsController(IControllerRepository repository)
+        public IceCreamsController(IControllerRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         // GET api/icecream
         [HttpGet]
-        public async Task<IEnumerable<IceCream>> GetIceCreamsAsync()
+        public async Task<IEnumerable<IceCreamReadDto>> GetIceCreamsAsync()
         {
-            return await _repository.GetAllIceCreamsAsync();
+            var iceCreams = await _repository.GetAllIceCreamsAsync();
+            var readDtos = _mapper.Map<IEnumerable<IceCreamReadDto>>(iceCreams);
+
+            return readDtos;
         }
 
         // GET api/icecream/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<IceCream>> GetIceCreamByIdAsync(Guid id)
+        public async Task<ActionResult<IceCreamReadDto>> GetIceCreamByIdAsync(Guid id)
         {
             IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
@@ -37,22 +44,28 @@ namespace IceCreamApi.Controllers
                 return NotFound();
             }
 
-            return Ok(iceCream);
+            IceCreamReadDto readDto = _mapper.Map<IceCreamReadDto>(iceCream);
+
+            return Ok(readDto);
         }
 
         // POST api/icecream
         [HttpPost]
-        public async Task<ActionResult<IceCream>> CreateIceCreamAsync(IceCream iceCream)
+        public async Task<ActionResult<IceCream>> CreateIceCreamAsync(IceCreamCreateUpdateDto createDto)
         {
+            IceCream iceCream = _mapper.Map<IceCream>(createDto);
+
             _repository.AddIceCream(iceCream);
             await _repository.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetIceCreamByIdAsync), new { Id = iceCream.Id }, iceCream);
+            IceCreamReadDto readDto = _mapper.Map<IceCreamReadDto>(iceCream);
+
+            return CreatedAtAction(nameof(GetIceCreamByIdAsync), new { Id = readDto.Id }, readDto);
         }
 
         // PUT api/icecream/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateIceCreamAsync(Guid id, IceCream newIceCream)
+        public async Task<ActionResult> UpdateIceCreamAsync(Guid id, IceCreamCreateUpdateDto updateDto)
         {
             IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
@@ -61,11 +74,7 @@ namespace IceCreamApi.Controllers
                 return NotFound();
             }
 
-            iceCream.Flavour = newIceCream.Flavour;
-            iceCream.Color = newIceCream.Color;
-            iceCream.Price = newIceCream.Price;
-            iceCream.WeightInGrams = newIceCream.WeightInGrams;
-
+            _mapper.Map(updateDto, iceCream);
             _repository.UpdateIceCream(iceCream);
             await _repository.SaveChangesAsync();
 
@@ -75,7 +84,7 @@ namespace IceCreamApi.Controllers
         // PATCH api/icecream/{id}
         [HttpPatch("{id}")]
         public async Task<ActionResult> PartialUpdateIceCreamAsync(Guid id, 
-            JsonPatchDocument<IceCream> patchDoc)
+            JsonPatchDocument<IceCreamCreateUpdateDto> patchDoc)
         {
             IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
@@ -84,13 +93,16 @@ namespace IceCreamApi.Controllers
                 return NotFound();
             }
 
-            patchDoc.ApplyTo(iceCream, ModelState);
+            var updateDto = _mapper.Map<IceCreamCreateUpdateDto>(iceCream);
+            patchDoc.ApplyTo(updateDto, ModelState);
 
             if (!TryValidateModel(iceCream))
             {
                 return ValidationProblem(ModelState);
             }
 
+            _mapper.Map(updateDto, iceCream);
+            _repository.UpdateIceCream(iceCream);
             await _repository.SaveChangesAsync();
 
             return NoContent();
@@ -107,7 +119,7 @@ namespace IceCreamApi.Controllers
                 return NotFound();
             }
 
-            _repository.RemoveIceCream(iceCream);
+            _repository.DeleteIceCream(iceCream);
             await _repository.SaveChangesAsync();
 
             return NoContent();

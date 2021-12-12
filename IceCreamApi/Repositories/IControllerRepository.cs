@@ -12,6 +12,6 @@ namespace IceCreamApi.Repositories
         Task SaveChangesAsync();
         void AddIceCream(IceCream iceCream);
         void UpdateIceCream(IceCream iceCream);
-        void RemoveIceCream(IceCream iceCream);
+        void DeleteIceCream(IceCream iceCream);
     }
 }

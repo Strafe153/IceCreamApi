@@ -1,14 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace IceCreamApi.Models
+namespace IceCreamApi.Dtos
 {
-    public class IceCream
+    public class IceCreamCreateUpdateDto
     {
-        public Guid Id { get; set; }
-
         [Required]
-        [StringLength(100, MinimumLength = 1)]
+        [StringLength(20, MinimumLength = 1)]
         public string Flavour { get; set; }
 
         public string Color { get; set; }
