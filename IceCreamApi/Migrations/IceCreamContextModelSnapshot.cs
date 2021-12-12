@@ -29,7 +29,9 @@ namespace IceCreamApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Flavour")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

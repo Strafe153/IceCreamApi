@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamApi.Migrations
 {
     [DbContext(typeof(IceCreamContext))]
-    [Migration("20211209232655_Initial")]
+    [Migration("20211212204848_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,7 +31,9 @@ namespace IceCreamApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Flavour")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");

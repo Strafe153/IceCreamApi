@@ -12,7 +12,7 @@ namespace IceCreamApi.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Flavour = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Flavour = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WeightInGrams = table.Column<int>(type: "int", nullable: false)
