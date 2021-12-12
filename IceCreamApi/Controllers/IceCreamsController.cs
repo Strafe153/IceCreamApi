@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using IceCreamApi.Models;
+using IceCreamApi.Repositories;
 
 namespace IceCreamApi.Controllers
 {
@@ -12,25 +12,25 @@ namespace IceCreamApi.Controllers
     [Route("api/icecream")]
     public class IceCreamsController : ControllerBase
     {
-        private readonly IceCreamContext _context;
+        private readonly IControllerRepository _repository;
 
-        public IceCreamsController(IceCreamContext context)
+        public IceCreamsController(IControllerRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET api/icecream
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IceCream>>> GetIceCreamsAsync()
+        public async Task<IEnumerable<IceCream>> GetIceCreamsAsync()
         {
-            return await _context.IceCreams.ToListAsync();
+            return await _repository.GetAllIceCreamsAsync();
         }
 
         // GET api/icecream/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<IceCream>> GetIceCreamByIdAsync(Guid id)
         {
-            IceCream iceCream = await _context.IceCreams.FirstOrDefaultAsync(i => i.Id == id);
+            IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
             if (iceCream is null)
             {
@@ -44,8 +44,8 @@ namespace IceCreamApi.Controllers
         [HttpPost]
         public async Task<ActionResult<IceCream>> CreateIceCreamAsync(IceCream iceCream)
         {
-            _context.Add(iceCream);
-            await _context.SaveChangesAsync();
+            _repository.AddIceCream(iceCream);
+            await _repository.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetIceCreamByIdAsync), new { Id = iceCream.Id }, iceCream);
         }
@@ -54,7 +54,7 @@ namespace IceCreamApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateIceCreamAsync(Guid id, IceCream newIceCream)
         {
-            IceCream iceCream = await _context.IceCreams.FirstOrDefaultAsync(i => i.Id == id);
+            IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
             if (iceCream is null)
             {
@@ -66,8 +66,8 @@ namespace IceCreamApi.Controllers
             iceCream.Price = newIceCream.Price;
             iceCream.WeightInGrams = newIceCream.WeightInGrams;
 
-            _context.Update(iceCream);
-            await _context.SaveChangesAsync();
+            _repository.UpdateIceCream(iceCream);
+            await _repository.SaveChangesAsync();
 
             return NoContent();
         }
@@ -77,7 +77,7 @@ namespace IceCreamApi.Controllers
         public async Task<ActionResult> PartialUpdateIceCreamAsync(Guid id, 
             JsonPatchDocument<IceCream> patchDoc)
         {
-            IceCream iceCream = await _context.IceCreams.FirstOrDefaultAsync(i => i.Id == id);
+            IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
             if (iceCream is null)
             {
@@ -91,7 +91,7 @@ namespace IceCreamApi.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            await _context.SaveChangesAsync();
+            await _repository.SaveChangesAsync();
 
             return NoContent();
         }
@@ -100,15 +100,15 @@ namespace IceCreamApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteIceCreamAsync(Guid id)
         {
-            IceCream iceCream = await _context.IceCreams.FirstOrDefaultAsync(i => i.Id == id);
+            IceCream iceCream = await _repository.GetIceCreamByIdAsync(id);
 
             if (iceCream is null)
             {
                 return NotFound();
             }
 
-            _context.Remove(iceCream);
-            await _context.SaveChangesAsync();
+            _repository.RemoveIceCream(iceCream);
+            await _repository.SaveChangesAsync();
 
             return NoContent();
         }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IceCreamApi.Models;
+using IceCreamApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
@@ -31,6 +32,8 @@ namespace IceCreamApi
         {
             services.AddDbContext<IceCreamContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
+
+            services.AddScoped<IControllerRepository, IceCreamRepository>();
 
             services.AddControllers(options =>
             {

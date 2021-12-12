@@ -17,6 +17,6 @@ namespace IceCreamApi.Models
         [Range(1, 30)]
         public decimal Price { get; set; }
 
-        public int WeightInGrams { get; set; }
+        public int WeightInGrams { get; set; } = 80;
     }
 }
