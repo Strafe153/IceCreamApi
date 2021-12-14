@@ -96,7 +96,7 @@ namespace IceCreamApi.Controllers
             var updateDto = _mapper.Map<IceCreamCreateUpdateDto>(iceCream);
             patchDoc.ApplyTo(updateDto, ModelState);
 
-            if (!TryValidateModel(iceCream))
+            if (!TryValidateModel(updateDto))
             {
                 return ValidationProblem(ModelState);
             }

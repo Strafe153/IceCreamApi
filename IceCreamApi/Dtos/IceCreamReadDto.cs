@@ -4,10 +4,10 @@ namespace IceCreamApi.Dtos
 {
     public record IceCreamReadDto
     {
-        public Guid Id { get; private set; }
-        public string Flavour { get; private set; }
-        public string Color { get; private set; }
-        public decimal Price { get; private set; }
-        public int WeightInGrams { get; private set; }
+        public Guid Id { get; init; }
+        public string Flavour { get; init; }
+        public string Color { get; init; }
+        public decimal Price { get; init; }
+        public int WeightInGrams { get; init; }
     }
 }
