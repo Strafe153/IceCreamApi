@@ -17,11 +17,6 @@ namespace IceCreamApi.Repositories
 
         public void AddIceCream(IceCream iceCream)
         {
-            if (iceCream is null)
-            {
-                throw new ArgumentNullException(nameof(iceCream));
-            }
-
             _context.IceCreams.Add(iceCream);
         }
 
@@ -37,11 +32,6 @@ namespace IceCreamApi.Repositories
 
         public void DeleteIceCream(IceCream iceCream)
         {
-            if (iceCream is null)
-            {
-                throw new ArgumentNullException(nameof(iceCream));
-            }
-
             _context.IceCreams.Remove(iceCream);
         }
 
@@ -52,11 +42,6 @@ namespace IceCreamApi.Repositories
 
         public void UpdateIceCream(IceCream iceCream)
         {
-            if (iceCream is null)
-            {
-                throw new ArgumentNullException(nameof(iceCream));
-            }
-
             _context.IceCreams.Update(iceCream);
         }
     }
