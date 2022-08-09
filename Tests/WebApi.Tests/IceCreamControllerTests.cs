@@ -102,7 +102,7 @@ namespace WebApi.Tests
 
             // Act
             var result = await _fixture.MockController.UpdateAsync(_fixture.Id, _fixture.CreateUpdateModel);
-            
+
             // Assert
             Assert.NotNull(result);
             Assert.IsType<NoContentResult>(result);
