@@ -7,7 +7,7 @@ namespace Application.Tests
 {
     public class IceCreamServiceTests : IClassFixture<IceCreamServiceFixture>, IDisposable
     {
-        private readonly IceCreamServiceFixture _fixture; 
+        private readonly IceCreamServiceFixture _fixture;
         private bool _disposed;
 
         public void Dispose()
