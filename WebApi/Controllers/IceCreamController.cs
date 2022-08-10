@@ -49,7 +49,7 @@ namespace WebApi.Controllers
 
             var readModel = _mapper.Map<IceCreamReadViewModel>(iceCream);
 
-            return CreatedAtAction("GetAsync", new { id = readModel.Id }, readModel);
+            return CreatedAtAction(nameof(GetAsync), new { id = readModel.Id }, readModel);
         }
 
         [HttpPut("{id:int:min(1)}")]
