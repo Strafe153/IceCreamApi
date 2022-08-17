@@ -18,10 +18,6 @@ namespace Application.Tests.Fixtures
             MockService = new IceCreamService(MockRepository.Object);
 
             Id = 1;
-            Flavour = "strawberry";
-            Color = "red";
-            Price = 3.25M;
-            WeightInGrams = 60;
             IceCream = GetIceCream();
             IceCreams = GetIceCreams();
         }
@@ -30,10 +26,6 @@ namespace Application.Tests.Fixtures
         public IIceCreamService MockService { get; }
 
         public int Id { get; }
-        public string Flavour { get; }
-        public string Color { get; }
-        public decimal Price { get; }
-        public int WeightInGrams { get; }
         public IceCream IceCream { get; }
         public IEnumerable<IceCream> IceCreams { get; }
 
@@ -42,10 +34,10 @@ namespace Application.Tests.Fixtures
             return new IceCream()
             {
                 Id = Id,
-                Flavour = Flavour,
-                Color = Color,
-                Price = Price,
-                WeightInGrams = WeightInGrams
+                Flavour = "strawberry",
+                Color = "red",
+                Price = 3.25M,
+                WeightInGrams = 60
             };
         }
 
@@ -53,8 +45,8 @@ namespace Application.Tests.Fixtures
         {
             return new List<IceCream>()
             {
-                GetIceCream(),
-                GetIceCream()
+                IceCream,
+                IceCream
             };
         }
     }
