@@ -16,7 +16,7 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
-        catch (ArgumentNullException ex)
+        catch (NullReferenceException ex)
         {
             await HandleExceptionAsync(context, HttpStatusCode.NotFound,
                 $"{ex.Message}. Path:{context.Request.Path}.");

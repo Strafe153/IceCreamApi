@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess
 {
-    public static class Configuration
+    public static class RepositoriesConfiguration
     {
         public static void AddApplicationRepositories(this IServiceCollection services)
         {

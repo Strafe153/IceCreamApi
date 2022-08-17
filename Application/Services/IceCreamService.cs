@@ -37,7 +37,7 @@ namespace Application.Services
 
             if (iceCream is null)
             {
-                throw new ArgumentNullException("Ice cream is null");
+                throw new NullReferenceException("Ice cream not found");
             }
 
             return iceCream;

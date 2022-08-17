@@ -1,19 +1,13 @@
 ﻿using Core.ViewModels;
 using FluentValidation;
-using WebApi.Validators;
 
-namespace WebApi
+namespace WebApi.Validators
 {
-    public static class Configuration
+    public static class ValidatorsConfiguration
     {
         public static void AddApplicationValidators(this IServiceCollection services)
         {
             services.AddScoped<IValidator<IceCreamCreateUpdateViewModel>, IceCreamCreateUpdateValidator>();
-        }
-
-        public static void AddApplicationMiddleware(this IApplicationBuilder builder)
-        {
-            builder.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
