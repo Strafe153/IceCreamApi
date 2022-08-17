@@ -1,6 +1,6 @@
 # Ice-cream Api
 
-### The project is an api, which allows you to work with ice-cream via Http-requests such as GET, POST, PUT, PATCH and DELETE. Any work with data is done with the help of viewmodels and automapping.
+### ASP.NET Core Web Api project, which allows to work with ice cream via Get, Post, Put, Patch, Delete HTTP-request. Data operations are done with the help of viewmodels and automapping.
 
 ## What Can It Do?
 * Get ice-cream
