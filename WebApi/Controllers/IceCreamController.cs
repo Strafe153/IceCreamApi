@@ -31,8 +31,8 @@ namespace WebApi.Controllers
             return Ok(readModels);
         }
 
-        [HttpGet("{id:int:min(1)}")]
-        public async Task<ActionResult<IceCreamReadViewModel>> GetAsync([FromRoute] int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IceCreamReadViewModel>> GetAsync([FromRoute] string id)
         {
             var iceCream = await _service.GetByIdAsync(id);
             var readModel = _mapper.Map<IceCreamReadViewModel>(iceCream);
@@ -45,16 +45,16 @@ namespace WebApi.Controllers
             [FromBody] IceCreamCreateUpdateViewModel createModel)
         {
             var iceCream = _mapper.Map<IceCream>(createModel);
-            await _service.CreateAsync(iceCream);
+            await _service.UpdateAsync(iceCream);
 
             var readModel = _mapper.Map<IceCreamReadViewModel>(iceCream);
 
             return CreatedAtAction(nameof(GetAsync), new { id = readModel.Id }, readModel);
         }
 
-        [HttpPut("{id:int:min(1)}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateAsync(
-            [FromRoute] int id, 
+            [FromRoute] string id, 
             [FromBody] IceCreamCreateUpdateViewModel updateModel)
         {
             var iceCream = await _service.GetByIdAsync(id);
@@ -65,9 +65,9 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id:int:min(1)}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateAsync(
-            [FromRoute] int id,
+            [FromRoute] string id,
             [FromBody] JsonPatchDocument<IceCreamCreateUpdateViewModel> patchDocument)
         {
             var iceCream = await _service.GetByIdAsync(id);
@@ -86,8 +86,8 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:int:min(1)}")]
-        public async Task<ActionResult> DeleteAsync([FromRoute] int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync([FromRoute] string id)
         {
             var iceCream = await _service.GetByIdAsync(id);
             await _service.DeleteAsync(iceCream);

@@ -5,6 +5,7 @@ using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Moq;
+using StackExchange.Redis;
 
 namespace Application.Tests.Fixtures
 {
@@ -14,22 +15,26 @@ namespace Application.Tests.Fixtures
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
 
-            MockRepository = fixture.Freeze<Mock<IIceCreamRepository>>();
-            MockService = new IceCreamService(MockRepository.Object);
+            MockIceCreamRepository = fixture.Freeze<Mock<IIceCreamRepository>>();
+            MockIceCreamService = new IceCreamService(MockIceCreamRepository.Object);
 
-            Id = 1;
+            Id = Guid.NewGuid().ToString();
             IceCream = GetIceCream();
             IceCreams = GetIceCreams();
+            RedisValue = GetRedisValue();
+            HashEntries = GetHashEntries();
         }
 
-        public Mock<IIceCreamRepository> MockRepository { get; }
-        public IIceCreamService MockService { get; }
+        public Mock<IIceCreamRepository> MockIceCreamRepository { get; }
+        public IIceCreamService MockIceCreamService { get; }
 
-        public int Id { get; }
+        public string Id { get; }
         public IceCream IceCream { get; }
-        public IEnumerable<IceCream> IceCreams { get; }
+        public List<IceCream> IceCreams { get; }
+        public RedisValue RedisValue { get; }
+        public HashEntry[] HashEntries { get; }
 
-        public IceCream GetIceCream()
+        private IceCream GetIceCream()
         {
             return new IceCream()
             {
@@ -41,12 +46,31 @@ namespace Application.Tests.Fixtures
             };
         }
 
-        public IEnumerable<IceCream> GetIceCreams()
+        private List<IceCream> GetIceCreams()
         {
             return new List<IceCream>()
             {
                 IceCream,
                 IceCream
+            };
+        }
+
+        private RedisValue GetRedisValue()
+        {
+            return new RedisValue("{}");
+        }
+
+        private HashEntry GetHashEntry()
+        {
+            return new HashEntry(RedisValue, RedisValue);
+        }
+
+        private HashEntry[] GetHashEntries()
+        {
+            return new HashEntry[]
+            {
+                GetHashEntry(),
+                GetHashEntry()
             };
         }
     }
