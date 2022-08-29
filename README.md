@@ -1,6 +1,6 @@
 # Ice-cream Api
 
-### ASP.NET Core Web Api project, which allows to work with ice cream via Get, Post, Put, Patch, Delete HTTP-request. Data operations are done with the help of viewmodels and AutoMapper.
+### ASP.NET Core Web Api project, which uses Redis as a primary database. Data operations are done with the help of viewmodels and automapping.
 
 ## What Can It Do?
 * Get ice-cream
