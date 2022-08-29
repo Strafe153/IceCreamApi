@@ -1,48 +1,53 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Repositories;
-using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using System.Text.Json;
 
 namespace DataAccess.Repositories
 {
     public class IceCreamRepository : IIceCreamRepository
     {
-        private readonly IceCreamContext _context;
+        private readonly IConnectionMultiplexer _redisConnection;
+        private readonly IDatabase _database;
+        private readonly string _hashKey = "IceCreamHash";
 
-        public IceCreamRepository(IceCreamContext context)
+        public IceCreamRepository(IConnectionMultiplexer redisConnection)
         {
-            _context = context;
+            _redisConnection = redisConnection;
+            _database = _redisConnection.GetDatabase();
         }
 
-        public void Create(IceCream iceCream)
+        public async Task UpdateAsync(IceCream iceCream)
         {
-            _context.IceCreams.Add(iceCream);
+            await CreateAsync(iceCream);
         }
 
-        public void Delete(IceCream iceCream)
+        public async Task<bool> DeleteAsync(IceCream iceCream)
         {
-            _context.IceCreams.Remove(iceCream);
+            bool result = await _database.HashDeleteAsync(_hashKey, iceCream.Id);
+            return result;
         }
 
-        public async Task<IEnumerable<IceCream>> GetAllAsync()
+        public async Task<HashEntry[]> GetAllAsync()
         {
-            var iceCreams = await _context.IceCreams.ToListAsync();
-            return iceCreams;
+            var hashEntry = await _database.HashGetAllAsync(_hashKey);
+            return hashEntry;
         }
 
-        public async Task<IceCream?> GetByIdAsync(int id)
+        public async Task<RedisValue> GetByIdAsync(string id)
         {
-            var iceCream = await _context.IceCreams.SingleOrDefaultAsync(i => i.Id == id);
-            return iceCream;
+            var hashEntry = await _database.HashGetAsync(_hashKey, id);
+            return hashEntry;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task CreateAsync(IceCream iceCream)
         {
-            await _context.SaveChangesAsync();
-        }
+            var serializedIceCream = JsonSerializer.Serialize(iceCream);
 
-        public void Update(IceCream iceCream)
-        {
-            _context.IceCreams.Update(iceCream);
+            await _database.HashSetAsync(_hashKey, new HashEntry[]
+            {
+                new HashEntry(iceCream.Id, serializedIceCream)
+            });
         }
     }
 }

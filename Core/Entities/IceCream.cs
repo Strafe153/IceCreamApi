@@ -2,7 +2,7 @@
 {
     public class IceCream
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public string? Flavour { get; set; }
         public string? Color { get; set; }
         public decimal Price { get; set; }

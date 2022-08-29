@@ -1,6 +1,8 @@
 ﻿using Application.Tests.Fixtures;
 using Core.Entities;
+using FluentAssertions;
 using Moq;
+using StackExchange.Redis;
 using Xunit;
 
 namespace Application.Tests
@@ -25,7 +27,7 @@ namespace Application.Tests
 
             if (disposing)
             {
-                _fixture.MockRepository.Invocations.Clear();
+                _fixture.MockIceCreamRepository.Invocations.Clear();
             }
 
             _disposed = true;
@@ -40,94 +42,79 @@ namespace Application.Tests
         public async Task GetAllAsync_AllItems_ReturnsIEnumerableOfIceCream()
         {
             // Arrange
-            _fixture.MockRepository
+            _fixture.MockIceCreamRepository
                 .Setup(r => r.GetAllAsync())
-                .ReturnsAsync(_fixture.IceCreams);
+                .ReturnsAsync(_fixture.HashEntries);
 
             // Act
-            var result = await _fixture.MockService.GetAllAsync();
+            var result = await _fixture.MockIceCreamService.GetAllAsync();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.IsAssignableFrom<IEnumerable<IceCream>>(result);
+            result.Should().NotBeNull();
+            result.Should().NotBeEmpty();
+            result.Should().BeOfType<List<IceCream>>();
         }
 
         [Fact]
         public async Task GetByIdAsync_ExistingIceCream_ReturnsIceCream()
         {
             // Arrange
-            _fixture.MockRepository
-                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(_fixture.IceCream);
+            _fixture.MockIceCreamRepository
+                .Setup(r => r.GetByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(_fixture.RedisValue);
 
             // Act
-            var result = await _fixture.MockService.GetByIdAsync(_fixture.Id);
+            var result = await _fixture.MockIceCreamService.GetByIdAsync(_fixture.Id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<IceCream>(result);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<IceCream>();
         }
 
         [Fact]
-        public async Task GetByIdAsync_NonexistingIceCream_ThrowsArgumentNullException()
+        public async Task GetByIdAsync_NonexistingIceCream_ThrowsNullReferenceException()
         {
             // Arrange
-            _fixture.MockRepository
-                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((IceCream)null!);
+            _fixture.MockIceCreamRepository
+                .Setup(r => r.GetByIdAsync(It.IsAny<string>()))
+                .Throws<NullReferenceException>();
 
             // Act
-            var result = _fixture.MockService.GetByIdAsync(_fixture.Id);
+            var result = async () => await _fixture.MockIceCreamService.GetByIdAsync(_fixture.Id);
 
             // Assert
-            Assert.NotNull(result);
-            await Assert.ThrowsAsync<ArgumentNullException>(async () => await result);
+            result.Should().NotBeNull();
+            await result.Should().ThrowAsync<NullReferenceException>();
         }
 
         [Fact]
-        public void CreateAsync_ValidData_ReturnsTask()
+        public void CreateAsync_ValidIceCream_ReturnsTask()
         {
-            // Arrange
-            _fixture.MockRepository
-                .Setup(r => r.Create(It.IsAny<IceCream>()));
-
             // Act
-            var result = _fixture.MockService.CreateAsync(_fixture.IceCream);
+            var result = async () => await _fixture.MockIceCreamService.CreateAsync(_fixture.IceCream);
 
             // Assert
-            Assert.NotNull(result);
-            _fixture.MockRepository.Verify(r => r.Create(It.IsAny<IceCream>()), Times.Once);
+            result.Should().NotBeNull();
         }
 
         [Fact]
-        public void UpdateAsync_ValidData_ReturnsTask()
+        public void UpdateAsync_ValidIceCream_ReturnsTask()
         {
-            // Arrange
-            _fixture.MockRepository
-                .Setup(r => r.Update(It.IsAny<IceCream>()));
-
             // Act
-            var result = _fixture.MockService.UpdateAsync(_fixture.IceCream);
+            var result = async () => await _fixture.MockIceCreamService.UpdateAsync(_fixture.IceCream);
 
             // Assert
-            Assert.NotNull(result);
-            _fixture.MockRepository.Verify(r => r.Update(It.IsAny<IceCream>()), Times.Once);
+            result.Should().NotBeNull();
         }
 
         [Fact]
-        public void DeleteAsync_ValidData_ReturnsTask()
+        public void DeleteAsync_ValidIceCream_ReturnsTask()
         {
-            // Arrange
-            _fixture.MockRepository
-                .Setup(r => r.Delete(It.IsAny<IceCream>()));
-
             // Act
-            var result = _fixture.MockService.DeleteAsync(_fixture.IceCream);
+            var result = async () => await _fixture.MockIceCreamService.DeleteAsync(_fixture.IceCream);
 
             // Assert
-            Assert.NotNull(result);
-            _fixture.MockRepository.Verify(r => r.Delete(It.IsAny<IceCream>()), Times.Once);
+            result.Should().NotBeNull();
         }
     }
 }

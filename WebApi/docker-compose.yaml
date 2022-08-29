@@ -1,0 +1,7 @@
+﻿version: '3.8'
+services:
+  redis:
+    image: 'redis'
+    container_name: 'ice_cream_api'
+    ports:
+      - "6379:6379"

@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.ViewModels;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApi.Tests.Fixtures;
@@ -14,58 +15,59 @@ namespace WebApi.Tests
         public IceCreamControllerTests(IceCreamControllerFixture fixture)
         {
             _fixture = fixture;
+            _fixture.MockObjectModelValidator(_fixture.MockIceCreamController);
         }
 
         [Fact]
-        public async Task GetAsync_AllItems_ReturnsOkObjectResult()
+        public async Task GetAsync_AllItems_ReturnsActionResultOfIEnumerableOfIceCreamReadViewModel()
         {
             // Arrange
-            _fixture.MockService
+            _fixture.MockIceCreamService
                 .Setup(s => s.GetAllAsync())
                 .ReturnsAsync(_fixture.IceCreams);
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IEnumerable<IceCreamReadViewModel>>(It.IsAny<IEnumerable<IceCream>>()))
-                .Returns(_fixture.ReadModels);
+                .Returns(_fixture.IceCreamReadViewModels);
 
             // Act
-            var result = await _fixture.MockController.GetAsync();
-            var readModels = (result.Result as OkObjectResult)!.Value as IEnumerable<IceCreamReadViewModel>;
+            var result = await _fixture.MockIceCreamController.GetAsync();
+            var readViewModels = result.Result.As<OkObjectResult>().Value.As<IEnumerable<IceCreamReadViewModel>>();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ActionResult<IEnumerable<IceCreamReadViewModel>>>(result);
-            Assert.NotEmpty(readModels!);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<IEnumerable<IceCreamReadViewModel>>>();
+            readViewModels.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task GetAsync_ExistingUser_ReturnsOkObjectResult()
+        public async Task GetAsync_ExistingIceCream_ReturnsActionResultOfIceCreamReadViewModel()
         {
             // Arraange
-            _fixture.MockService
-                .Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+            _fixture.MockIceCreamService
+                .Setup(s => s.GetByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync(_fixture.IceCream);
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IceCreamReadViewModel>(It.IsAny<IceCream>()))
-                .Returns(_fixture.ReadModel);
+                .Returns(_fixture.IceCreamReadViewModel);
 
             // Act
-            var result = await _fixture.MockController.GetAsync(_fixture.Id);
-            var readModel = (result.Result as OkObjectResult)!.Value as IceCreamReadViewModel;
+            var result = await _fixture.MockIceCreamController.GetAsync(_fixture.Id);
+            var readViewModel = result.Result.As<OkObjectResult>().Value.As<IceCreamReadViewModel>();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ActionResult<IceCreamReadViewModel>>(result);
-            Assert.NotNull(readModel);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<IceCreamReadViewModel>>();
+            readViewModel.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task CreateAsync_ValidData_ReturnsCreatedAtActionResult()
+        public async Task CreateAsync_ValidViewModel_ReturnsActionResultOfIceCreamReadViewModel()
         {
             // Arraange
-            _fixture.MockService
-                .Setup(s => s.CreateAsync(It.IsAny<IceCream>()));
+            _fixture.MockIceCreamService
+                .Setup(s => s.UpdateAsync(It.IsAny<IceCream>()));
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IceCream>(It.IsAny<IceCreamCreateUpdateViewModel>()))
@@ -73,81 +75,106 @@ namespace WebApi.Tests
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IceCreamReadViewModel>(It.IsAny<IceCream>()))
-                .Returns(_fixture.ReadModel);
+                .Returns(_fixture.IceCreamReadViewModel);
 
             // Act
-            var result = await _fixture.MockController.CreateAsync(_fixture.CreateUpdateModel);
-            var readModel = (result.Result as CreatedAtActionResult)!.Value as IceCreamReadViewModel;
+            var result = await _fixture.MockIceCreamController.CreateAsync(_fixture.IceCreamCreateUpdateViewModel);
+            var readViewModel = result.Result.As<CreatedAtActionResult>().Value.As<IceCreamReadViewModel>();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<ActionResult<IceCreamReadViewModel>>(result);
-            Assert.NotNull(readModel);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ActionResult<IceCreamReadViewModel>>();
+            readViewModel.Should().NotBeNull();
         }
 
         [Fact]
-        public async Task UpdateAsync_ExistingUser_ReturnsNoContentResult()
+        public async Task UpdateAsync_ExistingUserValidViewModel_ReturnsNoContentResult()
         {
             // Arraange
-            _fixture.MockService
-                .Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+            _fixture.MockIceCreamService
+                .Setup(s => s.GetByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync(_fixture.IceCream);
 
-            _fixture.MockService
+            _fixture.MockIceCreamService
                 .Setup(s => s.UpdateAsync(It.IsAny<IceCream>()));
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IceCreamReadViewModel>(It.IsAny<IceCream>()))
-                .Returns(_fixture.ReadModel);
+                .Returns(_fixture.IceCreamReadViewModel);
 
             // Act
-            var result = await _fixture.MockController.UpdateAsync(_fixture.Id, _fixture.CreateUpdateModel);
+            var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.IceCreamCreateUpdateViewModel);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<NoContentResult>(result);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContentResult>();
         }
 
         [Fact]
-        public async Task UpdateAsync_PatchRequestExistingUser_ReturnsNoContentResult()
+        public async Task UpdateAsync_ExistingIceCreamValidPatchDocument_ReturnsNoContentResult()
         {
             // Arraange
-            _fixture.MockService
-                .Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+            _fixture.MockIceCreamService
+                .Setup(s => s.GetByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync(_fixture.IceCream);
 
-            _fixture.MockService
+            _fixture.MockIceCreamService
                 .Setup(s => s.UpdateAsync(It.IsAny<IceCream>()));
 
             _fixture.MockMapper
                 .Setup(m => m.Map<IceCreamReadViewModel>(It.IsAny<IceCream>()))
-                .Returns(_fixture.ReadModel);
+                .Returns(_fixture.IceCreamReadViewModel);
 
             // Act
-            var result = await _fixture.MockController.UpdateAsync(_fixture.Id, _fixture.PatchDocument);
+            var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.JsonPatchDocument);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<NoContentResult>(result);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContentResult>();
         }
 
         [Fact]
-        public async Task DeleteAsync_ExistingUser_ReturnsNoContentResult()
+        public async Task UpdateAsync_ExistingIceCreamInvalidPatchDocument_ReturnsObjectResult()
         {
             // Arraange
-            _fixture.MockService
-                .Setup(s => s.GetByIdAsync(It.IsAny<int>()))
+            _fixture.MockIceCreamService
+                .Setup(s => s.GetByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync(_fixture.IceCream);
 
-            _fixture.MockService
+            _fixture.MockIceCreamService
+                .Setup(s => s.UpdateAsync(It.IsAny<IceCream>()));
+
+            _fixture.MockMapper
+                .Setup(m => m.Map<IceCreamReadViewModel>(It.IsAny<IceCream>()))
+                .Returns(_fixture.IceCreamReadViewModel);
+
+            _fixture.MockModelError(_fixture.MockIceCreamController);
+
+            // Act
+            var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.JsonPatchDocument);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ObjectResult>();
+        }
+
+        [Fact]
+        public async Task DeleteAsync_ExistingIceCream_ReturnsNoContentResult()
+        {
+            // Arraange
+            _fixture.MockIceCreamService
+                .Setup(s => s.GetByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(_fixture.IceCream);
+
+            _fixture.MockIceCreamService
                 .Setup(s => s.DeleteAsync(It.IsAny<IceCream>()));
 
             // Act
-            var result = await _fixture.MockController.DeleteAsync(_fixture.Id);
+            var result = await _fixture.MockIceCreamController.DeleteAsync(_fixture.Id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.IsType<NoContentResult>(result);
+            result.Should().NotBeNull();
+            result.Should().BeOfType<NoContentResult>();
         }
     }
 }

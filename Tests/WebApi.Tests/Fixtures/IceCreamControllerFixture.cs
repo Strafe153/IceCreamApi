@@ -4,9 +4,12 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces.Services;
 using Core.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Routing;
 using Moq;
 using WebApi.Controllers;
 
@@ -18,47 +21,74 @@ namespace WebApi.Tests.Fixtures
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization());
 
-            MockService = fixture.Freeze<Mock<IIceCreamService>>();
+            MockIceCreamService = fixture.Freeze<Mock<IIceCreamService>>();
             MockMapper = fixture.Freeze<Mock<IMapper>>();
 
-            MockController = new IceCreamController(MockService.Object, MockMapper.Object);
-            MockObjectModelValidator(MockController);
+            MockIceCreamController = new IceCreamController(MockIceCreamService.Object, MockMapper.Object);
 
-            Id = 1;
+            Id = Guid.NewGuid().ToString();
             Flavour = "strawberry";
             Color = "red";
             Price = 3.25M;
             WeightInGrams = 60;
-            PatchDocument = GetPatchDocument();
+            JsonPatchDocument = GetJsonPatchDocument();
             IceCream = GetIceCream();
-            ReadModel = GetReadModel();
-            CreateUpdateModel = GetCreateUpdateModel();
+            IceCreamReadViewModel = GetIceCreamReadViewModel();
+            IceCreamCreateUpdateViewModel = GetIceCreamCreateUpdateViewModel();
             IceCreams = GetIceCreams();
-            ReadModels = GetReadModels();
+            IceCreamReadViewModels = GetIceCreamReadViewModels();
         }
 
-        public Mock<IIceCreamService> MockService { get; }
+        public Mock<IIceCreamService> MockIceCreamService { get; }
         public Mock<IMapper> MockMapper { get; }
-        public IceCreamController MockController { get; }
+        public IceCreamController MockIceCreamController { get; }
 
-        public int Id { get; }
+        public string Id { get; }
         public string Flavour { get; }
         public string Color { get; }
         public decimal Price { get; }
         public int WeightInGrams { get; }
-        public JsonPatchDocument<IceCreamCreateUpdateViewModel> PatchDocument { get; }
+        public JsonPatchDocument<IceCreamCreateUpdateViewModel> JsonPatchDocument { get; }
         public IceCream IceCream { get; }
-        public IceCreamReadViewModel ReadModel { get; }
-        public IceCreamCreateUpdateViewModel CreateUpdateModel { get; }
+        public IceCreamReadViewModel IceCreamReadViewModel { get; }
+        public IceCreamCreateUpdateViewModel IceCreamCreateUpdateViewModel { get; }
         public IEnumerable<IceCream> IceCreams { get; }
-        public IEnumerable<IceCreamReadViewModel> ReadModels { get; }
+        public IEnumerable<IceCreamReadViewModel> IceCreamReadViewModels { get; }
 
-        public JsonPatchDocument<IceCreamCreateUpdateViewModel> GetPatchDocument()
+        public void MockObjectModelValidator(ControllerBase controller)
+        {
+            var objectValidator = new Mock<IObjectModelValidator>();
+
+            objectValidator.Setup(o => o.Validate(
+                It.IsAny<ActionContext>(),
+                It.IsAny<ValidationStateDictionary>(),
+                It.IsAny<string>(),
+                It.IsAny<object>()));
+
+            controller.ObjectValidator = objectValidator.Object;
+        }
+
+        public void MockModelError(ControllerBase controller)
+        {
+            var context = new ControllerContext(
+                new ActionContext(
+                    new DefaultHttpContext()
+                    {
+                        TraceIdentifier = "trace"
+                    },
+                    new RouteData(),
+                    new ControllerActionDescriptor()));
+
+            context.ModelState.AddModelError("key", "error");
+            controller.ControllerContext = context;
+        }
+
+        private JsonPatchDocument<IceCreamCreateUpdateViewModel> GetJsonPatchDocument()
         {
             return new JsonPatchDocument<IceCreamCreateUpdateViewModel>();
         }
 
-        public IceCream GetIceCream()
+        private IceCream GetIceCream()
         {
             return new IceCream()
             {
@@ -70,7 +100,7 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        public IceCreamReadViewModel GetReadModel()
+        private IceCreamReadViewModel GetIceCreamReadViewModel()
         {
             return new IceCreamReadViewModel()
             {
@@ -82,7 +112,7 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        public IceCreamCreateUpdateViewModel GetCreateUpdateModel()
+        private IceCreamCreateUpdateViewModel GetIceCreamCreateUpdateViewModel()
         {
             return new IceCreamCreateUpdateViewModel()
             {
@@ -93,7 +123,7 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        public IEnumerable<IceCream> GetIceCreams()
+        private IEnumerable<IceCream> GetIceCreams()
         {
             return new List<IceCream>()
             {
@@ -102,26 +132,13 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        public IEnumerable<IceCreamReadViewModel> GetReadModels()
+        private IEnumerable<IceCreamReadViewModel> GetIceCreamReadViewModels()
         {
             return new List<IceCreamReadViewModel>()
             {
-                GetReadModel(),
-                GetReadModel()
+                GetIceCreamReadViewModel(),
+                GetIceCreamReadViewModel()
             };
-        }
-
-        private void MockObjectModelValidator(ControllerBase controller)
-        {
-            var objectValidator = new Mock<IObjectModelValidator>();
-
-            objectValidator.Setup(o => o.Validate(
-                It.IsAny<ActionContext>(),
-                It.IsAny<ValidationStateDictionary>(),
-                It.IsAny<string>(),
-                It.IsAny<object>()));
-
-            controller.ObjectValidator = objectValidator.Object;
         }
     }
 }

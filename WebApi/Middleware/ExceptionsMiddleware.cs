@@ -1,4 +1,5 @@
-﻿using Core.Models;
+﻿using Core.Exceptions;
+using Core.Models;
 using System.Net;
 
 public class ExceptionMiddleware
@@ -19,6 +20,11 @@ public class ExceptionMiddleware
         catch (NullReferenceException ex)
         {
             await HandleExceptionAsync(context, HttpStatusCode.NotFound,
+                $"{ex.Message}. Path:{context.Request.Path}.");
+        }
+        catch (OperationFailedException ex)
+        {
+            await HandleExceptionAsync(context, HttpStatusCode.BadRequest,
                 $"{ex.Message}. Path:{context.Request.Path}.");
         }
         catch (Exception ex)

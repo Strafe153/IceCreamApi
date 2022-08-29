@@ -1,7 +1,7 @@
 using Application;
 using DataAccess;
 using FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Newtonsoft.Json.Serialization;
 using WebApi.Middleware;
 using WebApi.Validators;
@@ -24,9 +24,9 @@ builder.Services
         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
     });
 
-// Add database connection
-builder.Services.AddDbContext<IceCreamContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add redis connection multiplexer
+builder.Services.AddSingleton<IConnectionMultiplexer>(options =>
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")));
 
 // Add fluent validation
 builder.Services
