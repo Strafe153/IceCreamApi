@@ -1,9 +1,9 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoMapper;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Services;
-using Core.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -33,10 +33,10 @@ namespace WebApi.Tests.Fixtures
             WeightInGrams = 60;
             JsonPatchDocument = GetJsonPatchDocument();
             IceCream = GetIceCream();
-            IceCreamReadViewModel = GetIceCreamReadViewModel();
-            IceCreamCreateUpdateViewModel = GetIceCreamCreateUpdateViewModel();
+            IceCreamReadDto = GetIceCreamReadDto();
+            IceCreamCreateUpdateDto = GetIceCreamCreateUpdateDto();
             IceCreams = GetIceCreams();
-            IceCreamReadViewModels = GetIceCreamReadViewModels();
+            IceCreamReadDtos = GetIceCreamReadDtos();
         }
 
         public Mock<IIceCreamService> MockIceCreamService { get; }
@@ -48,12 +48,12 @@ namespace WebApi.Tests.Fixtures
         public string Color { get; }
         public decimal Price { get; }
         public int WeightInGrams { get; }
-        public JsonPatchDocument<IceCreamCreateUpdateViewModel> JsonPatchDocument { get; }
+        public JsonPatchDocument<IceCreamCreateUpdateDto> JsonPatchDocument { get; }
         public IceCream IceCream { get; }
-        public IceCreamReadViewModel IceCreamReadViewModel { get; }
-        public IceCreamCreateUpdateViewModel IceCreamCreateUpdateViewModel { get; }
+        public IceCreamReadDto IceCreamReadDto { get; }
+        public IceCreamCreateUpdateDto IceCreamCreateUpdateDto { get; }
         public IEnumerable<IceCream> IceCreams { get; }
-        public IEnumerable<IceCreamReadViewModel> IceCreamReadViewModels { get; }
+        public IEnumerable<IceCreamReadDto> IceCreamReadDtos { get; }
 
         public void MockObjectModelValidator(ControllerBase controller)
         {
@@ -83,9 +83,9 @@ namespace WebApi.Tests.Fixtures
             controller.ControllerContext = context;
         }
 
-        private JsonPatchDocument<IceCreamCreateUpdateViewModel> GetJsonPatchDocument()
+        private JsonPatchDocument<IceCreamCreateUpdateDto> GetJsonPatchDocument()
         {
-            return new JsonPatchDocument<IceCreamCreateUpdateViewModel>();
+            return new JsonPatchDocument<IceCreamCreateUpdateDto>();
         }
 
         private IceCream GetIceCream()
@@ -100,9 +100,9 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        private IceCreamReadViewModel GetIceCreamReadViewModel()
+        private IceCreamReadDto GetIceCreamReadDto()
         {
-            return new IceCreamReadViewModel()
+            return new IceCreamReadDto()
             {
                 Id = Id,
                 Flavour = Flavour,
@@ -112,9 +112,9 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        private IceCreamCreateUpdateViewModel GetIceCreamCreateUpdateViewModel()
+        private IceCreamCreateUpdateDto GetIceCreamCreateUpdateDto()
         {
-            return new IceCreamCreateUpdateViewModel()
+            return new IceCreamCreateUpdateDto()
             {
                 Flavour = Flavour,
                 Color = Color,
@@ -132,12 +132,12 @@ namespace WebApi.Tests.Fixtures
             };
         }
 
-        private IEnumerable<IceCreamReadViewModel> GetIceCreamReadViewModels()
+        private IEnumerable<IceCreamReadDto> GetIceCreamReadDtos()
         {
-            return new List<IceCreamReadViewModel>()
+            return new List<IceCreamReadDto>()
             {
-                GetIceCreamReadViewModel(),
-                GetIceCreamReadViewModel()
+                GetIceCreamReadDto(),
+                GetIceCreamReadDto()
             };
         }
     }

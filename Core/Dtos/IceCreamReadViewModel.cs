@@ -1,6 +1,6 @@
-﻿namespace Core.ViewModels
+﻿namespace Core.Dtos
 {
-    public record IceCreamReadViewModel
+    public record IceCreamReadDto
     {
         public string? Id { get; init; }
         public string? Flavour { get; init; }

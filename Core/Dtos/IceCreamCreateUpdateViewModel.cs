@@ -1,6 +1,6 @@
-﻿namespace Core.ViewModels
+﻿namespace Core.Dtos
 {
-    public record IceCreamCreateUpdateViewModel
+    public record IceCreamCreateUpdateDto
     {
         public string? Flavour { get; init; }
         public string? Color { get; init; }

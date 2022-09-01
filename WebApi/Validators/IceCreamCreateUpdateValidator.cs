@@ -1,9 +1,9 @@
-﻿using Core.ViewModels;
+﻿using Core.Dtos;
 using FluentValidation;
 
 namespace WebApi.Validators
 {
-    public class IceCreamCreateUpdateValidator : AbstractValidator<IceCreamCreateUpdateViewModel>
+    public class IceCreamCreateUpdateValidator : AbstractValidator<IceCreamCreateUpdateDto>
     {
         public IceCreamCreateUpdateValidator()
         {
