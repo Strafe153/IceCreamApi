@@ -7,31 +7,9 @@ using Xunit;
 
 namespace Application.Tests
 {
-    public class IceCreamServiceTests : IClassFixture<IceCreamServiceFixture>, IDisposable
+    public class IceCreamServiceTests : IClassFixture<IceCreamServiceFixture>
     {
         private readonly IceCreamServiceFixture _fixture;
-        private bool _disposed;
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _fixture.MockIceCreamRepository.Invocations.Clear();
-            }
-
-            _disposed = true;
-        }
 
         public IceCreamServiceTests(IceCreamServiceFixture fixture)
         {

@@ -1,4 +1,4 @@
-﻿using Core.ViewModels;
+﻿using Core.Dtos;
 using FluentValidation;
 
 namespace WebApi.Validators
@@ -7,7 +7,7 @@ namespace WebApi.Validators
     {
         public static void AddApplicationValidators(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<IceCreamCreateUpdateViewModel>, IceCreamCreateUpdateValidator>();
+            services.AddScoped<IValidator<IceCreamCreateUpdateDto>, IceCreamCreateUpdateValidator>();
         }
     }
 }

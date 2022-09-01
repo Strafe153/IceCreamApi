@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Core.Dtos;
 using Core.Entities;
-using Core.ViewModels;
 
 namespace WebApi.AutoMapperProfiles
 {
@@ -8,8 +8,8 @@ namespace WebApi.AutoMapperProfiles
     {
         public IceCreamProfile()
         {
-            CreateMap<IceCream, IceCreamReadViewModel>();
-            CreateMap<IceCream, IceCreamCreateUpdateViewModel>().ReverseMap();
+            CreateMap<IceCream, IceCreamReadDto>();
+            CreateMap<IceCream, IceCreamCreateUpdateDto>().ReverseMap();
         }
     }
 }

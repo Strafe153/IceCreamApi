@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Core.Dtos;
 using Core.Entities;
 using Core.Interfaces.Services;
-using Core.ViewModels;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,43 +23,40 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IceCreamReadViewModel>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<IceCreamReadDto>>> GetAsync()
         {
             var iceCreams = await _service.GetAllAsync();
-            var readModels = _mapper.Map<IEnumerable<IceCreamReadViewModel>>(iceCreams);
+            var readDtos = _mapper.Map<IEnumerable<IceCreamReadDto>>(iceCreams);
 
-            return Ok(readModels);
+            return Ok(readDtos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IceCreamReadViewModel>> GetAsync([FromRoute] string id)
+        public async Task<ActionResult<IceCreamReadDto>> GetAsync([FromRoute] string id)
         {
             var iceCream = await _service.GetByIdAsync(id);
-            var readModel = _mapper.Map<IceCreamReadViewModel>(iceCream);
+            var readDto = _mapper.Map<IceCreamReadDto>(iceCream);
 
-            return Ok(readModel);
+            return Ok(readDto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<IceCreamReadViewModel>> CreateAsync(
-            [FromBody] IceCreamCreateUpdateViewModel createModel)
+        public async Task<ActionResult<IceCreamReadDto>> CreateAsync([FromBody] IceCreamCreateUpdateDto createDto)
         {
-            var iceCream = _mapper.Map<IceCream>(createModel);
+            var iceCream = _mapper.Map<IceCream>(createDto);
             await _service.UpdateAsync(iceCream);
 
-            var readModel = _mapper.Map<IceCreamReadViewModel>(iceCream);
+            var readDto = _mapper.Map<IceCreamReadDto>(iceCream);
 
-            return CreatedAtAction(nameof(GetAsync), new { id = readModel.Id }, readModel);
+            return CreatedAtAction(nameof(GetAsync), new { id = readDto.Id }, readDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(
-            [FromRoute] string id, 
-            [FromBody] IceCreamCreateUpdateViewModel updateModel)
+        public async Task<ActionResult> UpdateAsync([FromRoute] string id, [FromBody] IceCreamCreateUpdateDto updateDto)
         {
             var iceCream = await _service.GetByIdAsync(id);
 
-            _mapper.Map(updateModel, iceCream);
+            _mapper.Map(updateDto, iceCream);
             await _service.UpdateAsync(iceCream);
 
             return NoContent();
@@ -68,19 +65,19 @@ namespace WebApi.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult> UpdateAsync(
             [FromRoute] string id,
-            [FromBody] JsonPatchDocument<IceCreamCreateUpdateViewModel> patchDocument)
+            [FromBody] JsonPatchDocument<IceCreamCreateUpdateDto> patchDocument)
         {
             var iceCream = await _service.GetByIdAsync(id);
-            var updateModel = _mapper.Map<IceCreamCreateUpdateViewModel>(iceCream);
+            var updateDto = _mapper.Map<IceCreamCreateUpdateDto>(iceCream);
 
-            patchDocument.ApplyTo(updateModel, ModelState);
+            patchDocument.ApplyTo(updateDto, ModelState);
 
-            if (!TryValidateModel(updateModel))
+            if (!TryValidateModel(updateDto))
             {
                 return ValidationProblem(ModelState);
             }
 
-            _mapper.Map(updateModel, iceCream);
+            _mapper.Map(updateDto, iceCream);
             await _service.UpdateAsync(iceCream);
 
             return NoContent();

@@ -1,8 +1,8 @@
 using Application;
 using DataAccess;
 using FluentValidation.AspNetCore;
-using StackExchange.Redis;
 using Newtonsoft.Json.Serialization;
+using StackExchange.Redis;
 using WebApi.Middleware;
 using WebApi.Validators;
 
