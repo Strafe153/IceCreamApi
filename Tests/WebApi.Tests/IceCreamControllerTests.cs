@@ -35,8 +35,7 @@ namespace WebApi.Tests
             var readDtos = result.Result.As<OkObjectResult>().Value.As<IEnumerable<IceCreamReadDto>>();
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<ActionResult<IEnumerable<IceCreamReadDto>>>();
+            result.Should().NotBeNull().And.BeOfType<ActionResult<IEnumerable<IceCreamReadDto>>>();
             readDtos.Should().NotBeEmpty();
         }
 
@@ -57,8 +56,7 @@ namespace WebApi.Tests
             var readDto = result.Result.As<OkObjectResult>().Value.As<IceCreamReadDto>();
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<ActionResult<IceCreamReadDto>>();
+            result.Should().NotBeNull().And.BeOfType<ActionResult<IceCreamReadDto>>();
             readDto.Should().NotBeNull();
         }
 
@@ -82,8 +80,7 @@ namespace WebApi.Tests
             var readDto = result.Result.As<CreatedAtActionResult>().Value.As<IceCreamReadDto>();
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<ActionResult<IceCreamReadDto>>();
+            result.Should().NotBeNull().And.BeOfType<ActionResult<IceCreamReadDto>>();
             readDto.Should().NotBeNull();
         }
 
@@ -106,8 +103,7 @@ namespace WebApi.Tests
             var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.IceCreamCreateUpdateDto);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().NotBeNull().And.BeOfType<NoContentResult>();
         }
 
         [Fact]
@@ -129,8 +125,7 @@ namespace WebApi.Tests
             var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.JsonPatchDocument);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().NotBeNull().And.BeOfType<NoContentResult>();
         }
 
         [Fact]
@@ -154,8 +149,7 @@ namespace WebApi.Tests
             var result = await _fixture.MockIceCreamController.UpdateAsync(_fixture.Id, _fixture.JsonPatchDocument);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<ObjectResult>();
+            result.Should().NotBeNull().And.BeOfType<ObjectResult>();
         }
 
         [Fact]
@@ -173,8 +167,7 @@ namespace WebApi.Tests
             var result = await _fixture.MockIceCreamController.DeleteAsync(_fixture.Id);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<NoContentResult>();
+            result.Should().NotBeNull().And.BeOfType<NoContentResult>();
         }
     }
 }
