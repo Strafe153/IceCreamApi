@@ -28,9 +28,7 @@ namespace Application.Tests
             var result = await _fixture.MockIceCreamService.GetAllAsync();
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().NotBeEmpty();
-            result.Should().BeOfType<List<IceCream>>();
+            result.Should().NotBeNull().And.NotBeEmpty().And.BeOfType<List<IceCream>>();
         }
 
         [Fact]
@@ -45,8 +43,7 @@ namespace Application.Tests
             var result = await _fixture.MockIceCreamService.GetByIdAsync(_fixture.Id);
 
             // Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<IceCream>();
+            result.Should().NotBeNull().And.BeOfType<IceCream>();
         }
 
         [Fact]
@@ -61,7 +58,6 @@ namespace Application.Tests
             var result = async () => await _fixture.MockIceCreamService.GetByIdAsync(_fixture.Id);
 
             // Assert
-            result.Should().NotBeNull();
             await result.Should().ThrowAsync<NullReferenceException>();
         }
 
