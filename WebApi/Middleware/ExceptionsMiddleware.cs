@@ -2,6 +2,8 @@
 using Core.Models;
 using System.Net;
 
+namespace WebApi.Middleware;
+
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
