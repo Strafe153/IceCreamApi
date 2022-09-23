@@ -2,14 +2,13 @@
 using Core.Dtos;
 using Core.Entities;
 
-namespace WebApi.AutoMapperProfiles
+namespace WebApi.AutoMapperProfiles;
+
+public class IceCreamProfile : Profile
 {
-    public class IceCreamProfile : Profile
+    public IceCreamProfile()
     {
-        public IceCreamProfile()
-        {
-            CreateMap<IceCream, IceCreamReadDto>();
-            CreateMap<IceCream, IceCreamCreateUpdateDto>().ReverseMap();
-        }
+        CreateMap<IceCream, IceCreamReadDto>();
+        CreateMap<IceCream, IceCreamCreateUpdateDto>().ReverseMap();
     }
 }

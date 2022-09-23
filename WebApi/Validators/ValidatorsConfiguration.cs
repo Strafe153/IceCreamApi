@@ -1,13 +1,12 @@
 ﻿using Core.Dtos;
 using FluentValidation;
 
-namespace WebApi.Validators
+namespace WebApi.Validators;
+
+public static class ValidatorsConfiguration
 {
-    public static class ValidatorsConfiguration
+    public static void AddApplicationValidators(this IServiceCollection services)
     {
-        public static void AddApplicationValidators(this IServiceCollection services)
-        {
-            services.AddScoped<IValidator<IceCreamCreateUpdateDto>, IceCreamCreateUpdateValidator>();
-        }
+        services.AddScoped<IValidator<IceCreamCreateUpdateDto>, IceCreamCreateUpdateValidator>();
     }
 }

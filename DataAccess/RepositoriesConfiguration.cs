@@ -2,13 +2,12 @@
 using DataAccess.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DataAccess
+namespace DataAccess;
+
+public static class RepositoriesConfiguration
 {
-    public static class RepositoriesConfiguration
+    public static void AddApplicationRepositories(this IServiceCollection services)
     {
-        public static void AddApplicationRepositories(this IServiceCollection services)
-        {
-            services.AddScoped<IIceCreamRepository, IceCreamRepository>();
-        }
+        services.AddScoped<IIceCreamRepository, IceCreamRepository>();
     }
 }

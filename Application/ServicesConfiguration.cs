@@ -2,13 +2,12 @@
 using Core.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application
+namespace Application;
+
+public static class ServicesConfiguration
 {
-    public static class ServicesConfiguration
+    public static void AddApplicationServices(this IServiceCollection services)
     {
-        public static void AddApplicationServices(this IServiceCollection services)
-        {
-            services.AddScoped<IIceCreamService, IceCreamService>();
-        }
+        services.AddScoped<IIceCreamService, IceCreamService>();
     }
 }
